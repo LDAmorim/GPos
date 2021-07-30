@@ -1,0 +1,9 @@
+ # GPos Copyright 2021
+#
+# Author: Ligia Diana Amorim
+
+sphinx>=3.4
+sphinxcontrib-programoutput
+sphinx_rtd_theme
+graphviz
+breathe

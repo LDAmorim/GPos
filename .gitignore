@@ -1,0 +1,26 @@
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+
+# Windows Visual Studio #
+#########################
+.vscode/
+
+# BUILD and install folder #
+############################
+build/
+install/
+
+# Doxygen #
+###########
+docs/doxyhtml/
+docs/doxyxml/
+docs/src/_static/
+
+# Sphinx #
+###########
+docs/html/
+docs/build/
+docs/latex/

@@ -1,0 +1,8 @@
+# GPos Copyright 2021
+#
+# Author: Ligia Diana Amorim
+
+numpy
+openpmd-api
+matplotlib
+scipy

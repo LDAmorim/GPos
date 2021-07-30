@@ -1,0 +1,36 @@
+############
+INPUT FILE
+GPos
+LDAmorim
+2021
+############
+
+debug=false
+np=20
+totq=1e-9
+en=10.1e3
+de=90.
+frms=4.0
+z_focal=3.0
+s_bprimary_x=0.7e-3
+s_bprimary_y=0.7e-3
+s_bprimary_z=0.4e-3
+s_angle_x=0.3e-3
+s_angle_y=0.3e-3
+type=e-
+profile=gaussian
+symmetrize=false
+x_beam=0.0 0.0 -4.0
+w_world=10.0 10.0 10.0
+hasfoil=true
+w_foil=10.0 10.0 2.0
+x_foil=0.0 0.0 4.0
+t_foil=G4_W
+drift=2.0
+iflens=true
+lens=1.0
+lens_pz=65
+ifback=true
+s_list=e-_primary e- e+
+encutoff=20.0 20.0 20.0
+pzcutoff=20.0 20.0 20.0

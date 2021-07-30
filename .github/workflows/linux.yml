@@ -1,0 +1,138 @@
+name: ubuntu
+
+on:
+  push:
+    branches: [ development ]
+  pull_request:
+    branches: [ development ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: .github/workflows/gcc.sh
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Install python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 pytest
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      # Creates cache for build of openPMD called linux-openPMD
+      # Without cache build would take about 2 m
+      - name: Cache openPMD
+        id: cache-openPMD
+        uses: actions/cache@v2
+        with:
+          path: ${{github.workspace}}/openPMD-api/install
+          key: ${{ runner.os }}-openPMD
+      
+      # Builds openPMD-api from GitHub dev branch
+      - name: Install openPMD-api
+        if: steps.cache-openPMD.outputs.cache-hit != 'true'
+        run: |
+          export opmd_dir=${{github.workspace}}/openPMD-api
+          mkdir $opmd_dir
+          git clone https://github.com/openPMD/openPMD-api.git $opmd_dir --depth 1 --branch 0.13.4
+          mkdir $opmd_dir/build
+          cd $opmd_dir/build
+          cmake .. -DCMAKE_INSTALL_PREFIX=$opmd_dir/install -DopenPMD_USE_HDF5=ON -DopenPMD_USE_PYTHON=OFF -DBUILD_TESTING=OFF -DBUILD_EXAMPLES=OFF -DBUILD_CLI_TOOLS=OFF
+          cmake --build . --target install --parallel 8
+
+      # Creates cache for build of Geant4 and g4mpi called linux-geant4
+      # Without cache build would take over 40 m 
+      - name: Cache Geant4
+        id: cache-geant4
+        uses: actions/cache@v2
+        with:
+          path: ${{github.workspace}}/geant4/install
+          key: ${{ runner.os }}-geant4
+
+      # Builds Geant4 with MPI support from GitHub release 10.7.2
+      - name: Install Geant4 and G4MPI
+        if: steps.cache-geant4.outputs.cache-hit != 'true'
+        run: |
+          export g4_dir=${{github.workspace}}/geant4
+          mkdir $g4_dir
+          export G4INSTALL=$g4_dir/install
+          git clone https://github.com/Geant4/geant4.git $g4_dir --depth 1 --branch geant4-10.7-release
+          mkdir $g4_dir/build
+          cd $g4_dir/build
+          cmake -DCMAKE_INSTALL_PREFIX=$G4INSTALL -DGEANT4_BUILD_EXAMPLES=ON -DGEANT4_USE_OPENGL_X11=OFF -DGEANT4_INSTALL_DATA=ON -DGEANT4_BUILD_MULTITHREADED=ON -DBUILD_SHARED_LIBS=ON -DGEANT4_USE_SYSTEM_EXPAT=OFF ..
+          cmake --build . --target install --parallel 16
+          cd $G4INSTALL/bin
+          source geant4.sh
+          cd $g4_dir/examples/extended/parallel/MPI/source/
+          mkdir build
+          cd build
+          cmake -DGeant4_DIR=$G4INSTALL/lib/Geant4-10.7.2  -DCMAKE_INSTALL_PREFIX=$G4INSTALL -DBUILD_SHARED_LIBS=ON ..
+          cmake --build . --target install --parallel 16
+
+      # Creates cache for build of GPos called linux-GPos-dev
+      # Without cache build would take less than 1 min
+      - name: Cache GPos
+        id: cache-GPos-dev
+        uses: actions/cache@v2
+        with:
+          path: ${{github.workspace}}/build
+          key: ${{ runner.os }}-GPos-dev
+
+      # Builds GPos
+      - name: Build GPos
+        if: steps.cache-GPos-dev.outputs.cache-hit != 'true'
+        run: |
+          cd ${{github.workspace}}
+          mkdir ${{github.workspace}}/build
+          cd ${{github.workspace}}/build
+          export G4DIR=${{github.workspace}}/geant4/install/lib/Geant4-10.7.2
+          export G4MPIDIR=${{github.workspace}}/geant4/install/lib/G4mpi-10.7.2
+          source ${{github.workspace}}/geant4/install/bin/geant4.sh
+          export LD_LIBRARY_PATH=${{github.workspace}}/openPMD-api/install/lib:$LD_LIBRARY_PATH
+          export PKG_CONFIG_PATH=${{github.workspace}}/openPMD-api/install/lib/pkgconfig:$PKG_CONFIG_PATH
+          export CMAKE_PREFIX_PATH=${{github.workspace}}/openPMD-api/install:$CMAKE_PREFIX_PATH
+          export G4PINSTALL=${{github.workspace}}/install
+          cmake -DGeant4_DIR=$G4DIR -DG4mpi_Dir=$G4MPIDIR -DCMAKE_INSTALL_PREFIX=$G4PINSTALL -DGEANT4_BUILD_MULTITHREADED=ON ..
+          cmake --build . --target install --parallel 8
+
+      # Installs GPos
+      - name: Install GPos
+        if: steps.cache-GPos-dev.outputs.cache-hit == 'true'
+        run: |
+          export G4DIR=${{github.workspace}}/geant4/install/lib/Geant4-10.7.2
+          export G4MPIDIR=${{github.workspace}}/geant4/install/lib/G4mpi-10.7.2
+          source ${{github.workspace}}/geant4/install/bin/geant4.sh
+          export LD_LIBRARY_PATH=${{github.workspace}}/openPMD-api/install/lib:$LD_LIBRARY_PATH
+          export PKG_CONFIG_PATH=${{github.workspace}}/openPMD-api/install/lib/pkgconfig:$PKG_CONFIG_PATH
+          export CMAKE_PREFIX_PATH=${{github.workspace}}/openPMD-api/install:$CMAKE_PREFIX_PATH
+          export G4PINSTALL=${{github.workspace}}/install
+          cd ${{github.workspace}}/build
+          cmake --build . --target install --parallel 8
+
+      # Running GPos executable on example input file
+      - name: Run GPos
+        run: |
+          source ${{github.workspace}}/geant4/install/bin/geant4.sh
+          export LD_LIBRARY_PATH=${{github.workspace}}/openPMD-api/install/lib:$LD_LIBRARY_PATH
+          cd ${{github.workspace}}/example
+          mpirun -n 2 ${{github.workspace}}/install/bin/GPos 1
+
+      # Testing syntax errors in python scripts
+      - name: Lint with flake8
+        run: |
+          flake8 ${{github.workspace}}/example --count --select=E9,F63,F7,F82 --show-source --statistics
+          #flake8 ${{github.workspace}}/example --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+      # Running python scripts on generated outputs
+      - name: Run python test script
+        run: |
+          python3 ${{github.workspace}}/example/gpos_test.py ${{github.workspace}}/example e-_primary_initial e-_primary_foil e-_foil e+_foil e-_primary_drift e-_drift e+_drift
