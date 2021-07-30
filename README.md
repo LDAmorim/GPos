@@ -18,12 +18,12 @@
 In order to learn how to install and run the code, please see the online documentation:
 https://gpos.readthedocs.io
 
-To know more details about the source code, please refer to the `doxygen <https://GPos.readthedocs.io/en/latest/_static/doxyhtml/html/index.html>`_ documentation or use `doxygen` and `graphviz` to build it locally via:
+To know more details about the source code, please refer to the [doxygen](https://GPos.readthedocs.io/en/latest/_static/doxyhtml/html/index.html) documentation or use `doxygen` and `graphviz` to build it locally via:
 ```console
 $ cd GPos/docs
 $ doxygen Doxygen
 ``` 
-and point your browser to the *doxyhtml/index.html* file generated.
+and point your browser to the `doxyhtml/index.html` file generated.
 
 Feel free to open an issue on this repo to report bugs and request changes.
 
