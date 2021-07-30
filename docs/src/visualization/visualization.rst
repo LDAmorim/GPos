@@ -4,15 +4,15 @@ Visualization
 =============
 
 
-GPos output data can be analysed using the Python (version 3 or higher) example scripts present in the `example` repo folder:
+GPos output data can be analysed using the Python (version 3 or higher) example scripts present in the ``example`` repo folder:
 
 ``gpos_funcs.py``
   Script that includes the functions to read, analyse and plot GPos data files of selected species and positions.
 
-``gpos_test.py`` (python gpos_test.py <path to folder containing openPMD files> <array of species>)
-  Script that uses the necessary functions of `gpos_funcs.py` to compare selected GPos output particle data and species properties.
+``gpos_test.py <path to folder containing openPMD files> <array of species>``
+  Script that uses the necessary functions of ``gpos_funcs.py`` to compare selected GPos output particle data and species properties.
 
-``gpos_plot.py`` (python gpos_test.py <path to folder containing openPMD files> <array of species>)
+``gpos_plot.py <path to folder containing openPMD files> <array of species>``
   Script that generates plots of the overlap of the 2D distributions of selected species at selected positions  and stores them under a new "Plots" folder.
 
 
@@ -51,4 +51,4 @@ To install using the `spack <https://spack.readthedocs.io/en/latest/>`_ package 
 
 .. note::
 
-  Syntax of all Python scripts is tested at each `Pull Request` and `Push` in the *linux* workflow of the GitHub repo and *gpos_test.py* is executed to confirm accuracy of results.
+  Syntax of all Python scripts is tested at each `Pull Request` and `Push` in the *Linux* workflow of the GitHub repo and ``gpos_test.py`` is executed to confirm accuracy of results.

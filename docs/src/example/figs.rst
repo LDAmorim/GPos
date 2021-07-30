@@ -3,11 +3,11 @@
 Results
 =======
 
-The *input.txt* text file contained in the `example` folder of the GitHub repo models 20 primary electrons interacting with a 10 mm thick Tungsten foil generating electron-positron pairs through the decay of Bremsstrahlung radiation.
+The ``input.txt`` text file contained in the ``example`` folder of the GitHub repo models 20 primary electrons interacting with a 10 mm thick Tungsten foil generating electron-positron pairs through the decay of Bremsstrahlung radiation.
 
 The resulting particles drift for 1 mm in vaccum intersecting a wide thin lens tuned to focus low energy (65 MeV) positrons.
 
-Running GPos with it and then using the Python script *gpos_plot.py* (instructions on how to use it can be found in :ref:`vis`) will generate various plots showing the 2D particle distributions at different stages of the simulation.
+Running GPos with it and then using the Python script ``gpos_plot.py`` (instructions on how to use it can be found in :ref:`vis`) will generate various plots showing the 2D particle distributions at different stages of the simulation.
 
 At the end of the simulation the lower energy and higher divergence electrons and positrons from the cloud will be spread out as can be seen in Fig. :numref:`fig_2d`.
 
