@@ -88,8 +88,8 @@ Selection
 
 GPos stores particles final track information if (according to user-defined values specified in input.txt):
 
-* particle species is in *s_list*
+* particle species is in ``s_list``
 * particle did not decay / reached cut-off (explained in list below)
 * particle did not leave the world space transversely
-* particle energy is above species *encutoff*
-* particle longitudinal momentum is above species *pzcutoff*
+* particle energy is above species ``encutoff``
+* particle longitudinal momentum is above species ``pzcutoff``
