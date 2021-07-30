@@ -47,7 +47,7 @@ jobs:
           mkdir $opmd_dir/build
           cd $opmd_dir/build
           cmake .. -DCMAKE_INSTALL_PREFIX=$opmd_dir/install -DopenPMD_USE_HDF5=ON -DopenPMD_USE_PYTHON=OFF -DBUILD_TESTING=OFF -DBUILD_EXAMPLES=OFF -DBUILD_CLI_TOOLS=OFF
-          cmake --build . --target install --parallel 8
+          cmake --build . --target install --parallel 2
 
       # Creates cache for build of Geant4 and g4mpi called linux-geant4
       # Without cache build would take over 40 m 
@@ -69,14 +69,14 @@ jobs:
           mkdir $g4_dir/build
           cd $g4_dir/build
           cmake -DCMAKE_INSTALL_PREFIX=$G4INSTALL -DGEANT4_BUILD_EXAMPLES=ON -DGEANT4_USE_OPENGL_X11=OFF -DGEANT4_INSTALL_DATA=ON -DGEANT4_BUILD_MULTITHREADED=ON -DBUILD_SHARED_LIBS=ON -DGEANT4_USE_SYSTEM_EXPAT=OFF ..
-          cmake --build . --target install --parallel 16
+          cmake --build . --target install --parallel 2
           cd $G4INSTALL/bin
           source geant4.sh
           cd $g4_dir/examples/extended/parallel/MPI/source/
           mkdir build
           cd build
           cmake -DGeant4_DIR=$G4INSTALL/lib/Geant4-10.7.2  -DCMAKE_INSTALL_PREFIX=$G4INSTALL -DBUILD_SHARED_LIBS=ON ..
-          cmake --build . --target install --parallel 16
+          cmake --build . --target install --parallel 2
 
       # Creates cache for build of GPos called linux-GPos-dev
       # Without cache build would take less than 1 min
@@ -102,7 +102,7 @@ jobs:
           export CMAKE_PREFIX_PATH=${{github.workspace}}/openPMD-api/install:$CMAKE_PREFIX_PATH
           export G4PINSTALL=${{github.workspace}}/install
           cmake -DGeant4_DIR=$G4DIR -DG4mpi_Dir=$G4MPIDIR -DCMAKE_INSTALL_PREFIX=$G4PINSTALL -DGEANT4_BUILD_MULTITHREADED=ON ..
-          cmake --build . --target install --parallel 8
+          cmake --build . --target install --parallel 2
 
       # Installs GPos
       - name: Install GPos
@@ -116,7 +116,7 @@ jobs:
           export CMAKE_PREFIX_PATH=${{github.workspace}}/openPMD-api/install:$CMAKE_PREFIX_PATH
           export G4PINSTALL=${{github.workspace}}/install
           cd ${{github.workspace}}/build
-          cmake --build . --target install --parallel 8
+          cmake --build . --target install --parallel 2
 
       # Running GPos executable on example input file
       - name: Run GPos
